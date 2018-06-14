@@ -105,14 +105,15 @@ function getUserItem(){
             var qty = res[0].stock_quantity;
             var sales = res[0].product_sales;
             var price = parseFloat(res[0].price);
+            var salesprice = parseFloat(price * qty);
             if(qty >= answer.quantity){
                 qty -= answer.quantity;
-                sales = parseFloat(sales + (answer.quantity*price));
+                sales = parseInt(sales + (answer.quantity*price));
 //                console.log(sales);
                 connection.query("UPDATE products SET ?,? where ?",
                 [{stock_quantity: qty},{product_sales: sales},{productname: answer.item_id}],
                 function(err, res){
-                    console.log(`Your order of ${answer.quantity} ${answer.item_id}  is placed`);
+                    console.log(`Your order of ${answer.quantity} ${answer.item_id} is placed. Total Cost is ${salesprice}`);
 //                    console.log(res);
                     runItemSearch();
                 });//end of product Update query
