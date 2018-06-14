@@ -54,7 +54,7 @@ function showProducts(){
 //        console.log(res);
         var table = new Table({
             head: ['Item Id', 'Product Name','Price']
-            , colWidths: [10, 50,25]
+            , colWidths: [20, 50,30]
         });
         itemArray = new Array();
         for(var i=0; i < res.length; i++){
