@@ -100,9 +100,10 @@ function getUserItem(){
                 sales = parseFloat(sales + (answer.quantity*price));
 //                console.log(sales);
                 connection.query("UPDATE products SET ?,? where ?",
-                [{stock_quantity: qty},{product_sales: sales},{item_id: answer.item_id}],
+                [{stock_quantity: qty},{product_sales: sales},{productname: answer.item_id}],
                 function(err, res){
-                    console.log(`Your order for item ${answer.item_id} for quantity ${answer.quantity} is placed`);
+                    console.log(`Your order of ${answer.quantity} ${answer.item_id}  is placed`);
+                    console.log(res);
                     runItemSearch();
                 });//end of product Update query
             }//end of if
