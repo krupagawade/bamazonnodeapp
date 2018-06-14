@@ -19,14 +19,6 @@ connection.connect(function(err) {
     if (err) throw err;
   });      
 
-/*
-function connectDB(){
-    connection.connect(function(err) {
-        if (err) throw err;
-      });      
-}
-*/
-
 function endConnectDB(){
   // connection.end();
 }
@@ -77,7 +69,7 @@ function allItemSearch(){
     connection.query(query,function(err, res){
         var table = new Table({
             head: ['Item Id', 'Product Name','Price','Stock Quantity']
-            , colWidths: [10, 50,25,10]
+            , colWidths: [10, 50,25,30]
         });
 
         for(var i=0; i < res.length; i++){
@@ -92,7 +84,7 @@ function allItemSearch(){
        }); //end of connectionquery
 }//End of allItemSearch
 
-//checks fpr low inventory for all items and displays the rows of items with qty >= 5
+//checks for low inventory for all items and displays the rows of items with qty >= 5
 function checkInventory(){
     var query = "SELECT item_id, productname, price, stock_quantity FROM products where stock_quantity <= 5";
     //Open database connection
@@ -100,7 +92,7 @@ function checkInventory(){
 
         var table = new Table({
             head: ['Item Id', 'Product Name','Price','Stock Quantity']
-            , colWidths: [10, 50,25,10]
+            , colWidths: [10, 50,25,30]
         });
 
         for(var i=0; i < res.length; i++){
@@ -147,16 +139,10 @@ function addInventory(){
                 [{stock_quantity: qty},{item_id: answer.item_id}],
                 function(err, res){
                     console.log(`Quantity ${answer.quantity} is added to your item ${answer.item_id}`);
-                    break;
+                    runItemSearch(); //execute the method
+                    //break;
                 });//end of product Update query
-
         
-        // connection.query("UPDATE products SET ? where ?",
-        // [{stock_quantity: qty},{item_id: answer.item_id}],
-        // function(err, res){
-        //     console.log(`Quantity ${answer.quantity} is added to your item ${answer.item_id}`);
-
-        runItemSearch(); //execute the method
         });//end of select query
 
     }); //end of then function    

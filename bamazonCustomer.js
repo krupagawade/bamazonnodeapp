@@ -1,3 +1,13 @@
+/**
+ * User file. Shows the user the list of items available in our app
+ * Gives a user option to select the items he wants to order
+ * Asks for Quantity to be ordered
+ * Checks if enough quantities available, places a order
+ * If not enough quantities, displays a message to user. 
+ * Prompts the user to order more items
+ * When the user places a order, we update the stock quantity and product_sales in the database 
+ */
+
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require('cli-table');
@@ -48,6 +58,7 @@ function runItemSearch(){
     });
 } //end of function runItemSearch
 
+//list of items available for display to user
 function showProducts(){
     var query = "SELECT item_id, productname, price FROM products";
     connection.query(query,function(err, res){
@@ -58,6 +69,7 @@ function showProducts(){
         });
         itemArray = new Array();
         for(var i=0; i < res.length; i++){
+            //store the product names so we can display the user the list of item to order
             itemArray.push(res[i].productname);
             table.push(
                 [res[i].item_id,res[i].productname,res[i].price]        
@@ -71,6 +83,7 @@ function showProducts(){
     }); //end of connection 
 }
 
+//Prompt for user to select a item to place a order. Update the stock_quantity and product_sales in database after the order is placed
 function getUserItem(){
     inquirer
     .prompt([
@@ -86,10 +99,7 @@ function getUserItem(){
             message: "How much quantity do you want to buy?"
         }    
     ]).then(function(answer){
-        console.log(answer.item_id);
-        console.log(answer.quantity);
         var itemName = answer.item_id;
-//        connection.query("SELECT * FROM top5000 WHERE ?", { song: answer.song }, function(err, res) {
 
         connection.query("SELECT stock_quantity, price, product_sales from products where ?",{productname: itemName},function(err,res){
             var qty = res[0].stock_quantity;
@@ -103,7 +113,7 @@ function getUserItem(){
                 [{stock_quantity: qty},{product_sales: sales},{productname: answer.item_id}],
                 function(err, res){
                     console.log(`Your order of ${answer.quantity} ${answer.item_id}  is placed`);
-                    console.log(res);
+//                    console.log(res);
                     runItemSearch();
                 });//end of product Update query
             }//end of if
@@ -111,20 +121,8 @@ function getUserItem(){
                 console.log("Not enough quantity for item");
                 runItemSearch();
             }
-            //getMoreItems();
-            //connection.end();
         }); // end of product lookup query
     }); //end of .then
 }    
 
-/**function getMoreItems(){
-    inquirer.prompt([
-        {
-            name: "moreItem",
-            type: "confirm",
-            message: "Do you want to order more items?"
-        }
-    ]).then
-
-}*/
 
