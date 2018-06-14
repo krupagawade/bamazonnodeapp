@@ -107,7 +107,7 @@ function addDepartment(){
             function(err, response) {
                 if (err) throw err;
               });
-        console.log("Department added to Departments table");
+        console.log("New Department created");
         getDepartmentInfo();
     }); //END OF THEN FUNCTION
 

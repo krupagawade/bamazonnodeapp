@@ -209,7 +209,7 @@ function addNewProduct(){
             function(err, response) {
               if (err) throw err;
             });
-    console.log("Row added to product table");
+    console.log("New product added");
     runItemSearch(); //execute the method
     });//end of then function   
 }

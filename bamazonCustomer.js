@@ -21,8 +21,34 @@ connection.connect(function(err) {
   runItemSearch();
 });
 
+var itemArray;
+
 //displays the product table from the database to the user
 function runItemSearch(){
+    inquirer
+    .prompt([
+        {    
+            name: "user_choice",
+            type: "list",
+            message: "Welcome to BAmazon",
+            choices: [
+                    "Show products",
+                    "Exit"
+            ]
+        }   
+    ]).then(function(answer){
+        switch(answer.user_choice){
+            case "Exit":
+                connection.end();
+                break;
+            default:
+                showProducts();
+                break;
+        }
+    });
+} //end of function runItemSearch
+
+function showProducts(){
     var query = "SELECT item_id, productname, price FROM products";
     connection.query(query,function(err, res){
 //        console.log(res);
@@ -30,8 +56,9 @@ function runItemSearch(){
             head: ['Item Id', 'Product Name','Price']
             , colWidths: [10, 50,25]
         });
-
+        itemArray = new Array();
         for(var i=0; i < res.length; i++){
+            itemArray.push(res[i].productname);
             table.push(
                 [res[i].item_id,res[i].productname,res[i].price]        
             );
@@ -42,16 +69,16 @@ function runItemSearch(){
        //call to get the items user has selected to buy
        getUserItem();
     }); //end of connection 
-
-} //end of function runItemSearch
+}
 
 function getUserItem(){
     inquirer
     .prompt([
         {    
             name: "item_id",
-            type: "input",
-            message: "Enter an item id you want to buy?"
+            type: "list",
+            message: "Select the item you want to buy?",
+            choices: itemArray
         },
         {
             name: "quantity",
@@ -61,21 +88,27 @@ function getUserItem(){
     ]).then(function(answer){
         console.log(answer.item_id);
         console.log(answer.quantity);
-        var itemid = parseInt(answer.item_id);
+        var itemName = answer.item_id;
 //        connection.query("SELECT * FROM top5000 WHERE ?", { song: answer.song }, function(err, res) {
 
-        connection.query("SELECT stock_quantity from products where ?",{item_id: itemid},function(err,res){
+        connection.query("SELECT stock_quantity, price, product_sales from products where ?",{productname: itemName},function(err,res){
             var qty = res[0].stock_quantity;
+            var sales = res[0].product_sales;
+            var price = parseFloat(res[0].price);
             if(qty >= answer.quantity){
                 qty -= answer.quantity;
-                connection.query("UPDATE products SET ? where ?",
-                [{stock_quantity: qty},{item_id: answer.item_id}],
+                sales = parseFloat(sales + (answer.quantity*price));
+//                console.log(sales);
+                connection.query("UPDATE products SET ?,? where ?",
+                [{stock_quantity: qty},{product_sales: sales},{item_id: answer.item_id}],
                 function(err, res){
                     console.log(`Your order for item ${answer.item_id} for quantity ${answer.quantity} is placed`);
+                    runItemSearch();
                 });//end of product Update query
             }//end of if
             else{
                 console.log("Not enough quantity for item");
+                runItemSearch();
             }
             //getMoreItems();
             //connection.end();
