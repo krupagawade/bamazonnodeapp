@@ -1,3 +1,12 @@
+/**
+ * File to handle manager task
+ * View Inventory - Manager can see the inventory for all products
+ * View Low Inventory - Display the items that have stock_quantity >= 5
+ * Add Inventory - Manager can add the inventory for the items
+ * Add New Product - Prompts the manager series of inputs to enter the new product into the database
+ * Exit - Exit out of the program
+ */
+
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require('cli-table');

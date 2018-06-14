@@ -1,3 +1,10 @@
+/**
+ * Supervisor File
+ * View Product Sales by Department - Add all the sales for different items in one department - overhead cost is total profit for department
+ * Two tables are joined using the department name. 
+ * Add Department - Allows to add new departments ad and when required.
+ */
+
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require('cli-table');
